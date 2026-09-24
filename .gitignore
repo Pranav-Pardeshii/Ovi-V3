@@ -1,0 +1,20 @@
+# dependencies
+node_modules/
+
+# build output
+frontend/dist/
+dist/
+
+# env & secrets
+.env
+.env.*
+*.local
+
+# editor / tooling scratch
+.mermaid-test/
+
+# docs
+Ovi-3 Plan Document
+
+# z-code
+.zcodeignore
