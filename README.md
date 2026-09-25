@@ -475,9 +475,18 @@ Production build:
 npm run build      # type-check + bundle → dist/
 ```
 
-### Backend (in active development)
+### Backend
 
-The FastAPI + Neo4j backend is the next milestone (see [Project Status](#-project-status)). The frontend already carries the typed API contract it will serve — see [`frontend/src/api/endpoints.ts`](frontend/src/api/endpoints.ts) (`GET /cases`, `POST /complaints`, `POST /freeze/{tok}/transmit`, `GET /cases/{id}/report`, …) and the dev proxy in `vite.config.ts` (`/api` → `localhost:8000`).
+The FastAPI backend serves the typed contract the frontend already defines — see [`frontend/src/api/endpoints.ts`](frontend/src/api/endpoints.ts) (`GET /cases`, `POST /complaints`, `POST /freeze/{tok}/transmit`, `GET /cases/{id}/report`, …). The Vite dev proxy (`/api` → `localhost:8000`) means zero config:
+
+```bash
+cd backend
+python -m venv .venv
+.venv/Scripts/pip install -r requirements.txt      # or .venv/bin/pip on Linux/macOS
+.venv/Scripts/python -m uvicorn app.main:app --reload --port 8000
+```
+
+Then run the console as usual (`npm run dev` in `frontend/`) — it now has a live API behind `/api`, OpenAPI docs at `localhost:8000/docs`, and a WebSocket hub at `/ws`. The backend reproduces the simulation domain bit-for-bit in Python (same mule tokens, SHAP tables, hash anchors — verified against node-run goldens), drives the same case lifecycle on a 5 Hz sim-clock heartbeat, and renders the FIR report server-side. See [`backend/README.md`](backend/README.md) for the full endpoint table.
 
 ---
 
@@ -488,11 +497,14 @@ The FastAPI + Neo4j backend is the next milestone (see [Project Status](#-projec
 | Interdiction console (8 pages) | ✅ **Implemented** | React 18 + TS + Tailwind, verified end-to-end |
 | Simulation engine | ✅ **Implemented** | Case lifecycle, spawns, freeze confirmations, alert progression |
 | Investigation report generator | ✅ **Implemented** | FIR-style HTML bundle with print/download/Fabric anchoring |
-| FastAPI backend | 🚧 **In progress** | Contract defined; swap-in point ready |
-| Neo4j token graph | 🚧 **In progress** | Graph model per plan §2 |
+| FastAPI backend | ✅ **Implemented** | Typed contract + sim-parity engine in Python + WebSocket hub; in-memory state |
+| FIR report server-side | ✅ **Implemented** | Python port of the report generator, `GET /cases/{id}/report` |
+| RNG/seed parity (TS ↔ Python) | ✅ **Verified** | mulberry32/FNV port checked against node-generated golden values |
+| Neo4j token graph service | 📋 **Planned** | Graph served deterministically today; store swap-in per plan §2 |
+| PostgreSQL + Redis persistence | 📋 **Planned** | `state.py` is the single swap point |
 | GraphSAGE → XGBoost training | 📋 **Planned** | TransXion pre-train → bank fine-tune |
 | Federated plane (Flower/FLARE) | 📋 **Planned** | Secure aggregation + DP |
-| Hyperledger Fabric channels | 📋 **Planned** | Hash anchoring, 4 channels |
+| Hyperledger Fabric channels | 📋 **Planned** | Hash anchoring simulated in-app; chaincode next |
 
 **Evaluation targets** (pilot-gated — no claims before controlled data): hit@1 / hit@3 on Tier-1 forecasts, median time-lead before first cash-out, ECE < 0.05, AUC improvement over existing bank EFRMS baselines, and — the primary success metric — **actual recovery contribution**. System-level target: p95 prediction latency < 20 s, investigator visibility < 30 s.
 
@@ -517,11 +529,11 @@ Expand only after pre-agreed pilot gates are met. No production freezes without 
 
 ## ⚠️ Current Limitations
 
-- **Frontend-only right now** — the console runs on a deterministic simulation engine with synthetic demo data; hashes are fake digests, not real Fabric commits.
+- **Simulation-backed demo** — the console and the backend both run the same deterministic simulation (synthetic data; hashes are simulated digests, not real Fabric commits). The FastAPI backend keeps state in memory; PostgreSQL/Neo4j/Fabric integration are the next milestones.
 - **Model metrics shown in the console are demo constants**, not measured results — real metrics come only from the Phase-1 pilot.
 - **The ranker and TTC models are specified, not yet trained** — bank-local labelled data is the prerequisite.
 - **No live banking, NCRP, or CFCFRMS integration** — those are Phase 1–2 deliverables.
-- **No authentication / multi-tenancy** in the current frontend.
+- **No authentication / multi-tenancy** in the demo stack.
 
 This honesty is deliberate: an interdiction system that overstates certainty causes false freezes, and false freezes destroy the operational trust the system depends on.
 
@@ -535,7 +547,8 @@ This honesty is deliberate: an interdiction system that overstates certainty cau
 - [x] Simulation engine (case lifecycle, spawn, freeze confirmations, alert progression)
 - [x] Investigation report generation with Fabric-anchoring UX
 - [x] Typed FastAPI contract + dev proxy in the frontend
-- [ ] FastAPI backend + PostgreSQL + Redis
+- [x] FastAPI backend — typed contract, sim-parity domain engine, WebSocket hub, server-side FIR reports
+- [ ] PostgreSQL + Redis persistence behind `state.py`
 - [ ] Neo4j tokenised graph service + Leiden communities
 - [ ] GraphSAGE → XGBoost → isotonic training pipeline (TransXion → bank fine-tune)
 - [ ] TTC survival model + location ranker on bank-local labels
