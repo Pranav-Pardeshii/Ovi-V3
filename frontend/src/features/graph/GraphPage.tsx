@@ -4,7 +4,7 @@ import { Icon } from '../../components/Icon';
 import { Panel } from '../../components/Panel';
 import { INRc, clamp } from '../../lib/format';
 import { BANKS, pColor } from '../../data/constants';
-import { buildGraph, hull, type GEdge, type GNode } from '../../sim/graph';
+import { buildGraph, type GEdge, type GNode } from '../../sim/graph';
 import { muleBal, selCaseC, nowMs } from '../../sim/selectors';
 
 const anchorX = (nd: GNode) => {
@@ -148,32 +148,6 @@ export function GraphPage() {
       ctx.translate(ox, oy);
       ctx.scale(sc, sc);
       dash -= 0.45;
-
-      // Leiden community hulls
-      [0, 1].forEach((cm) => {
-        const pts = G.n.filter((nd, i) => vis.has(i) && nd.comm === cm).map((nd) => ({ x: nd.x, y: nd.y }));
-        if (pts.length < 3) return;
-        const h = hull(pts);
-        const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
-        const cy = pts.reduce((s, p) => s + p.y, 0) / pts.length;
-        ctx.beginPath();
-        h.forEach((p, i) => {
-          const px = cx + (p.x - cx) * 1.28,
-            py = cy + (p.y - cy) * 1.28;
-          i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
-        });
-        ctx.closePath();
-        ctx.fillStyle = cm ? 'rgba(139,124,246,0.05)' : 'rgba(56,189,248,0.05)';
-        ctx.strokeStyle = cm ? 'rgba(139,124,246,0.3)' : 'rgba(56,189,248,0.3)';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([4, 5]);
-        ctx.fill();
-        ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.fillStyle = cm ? 'rgba(172,159,249,.55)' : 'rgba(56,189,248,.55)';
-        ctx.font = '9px IBM Plex Mono';
-        ctx.fillText('LEIDEN C' + (cm + 1) + ' · n=' + pts.length, h[0].x, h[0].y - 10);
-      });
 
       // edges
       G.e.forEach((ed) => {
