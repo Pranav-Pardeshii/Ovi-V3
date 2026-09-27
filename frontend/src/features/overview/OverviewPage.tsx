@@ -5,27 +5,28 @@ import { Panel, StatCard } from '../../components/Panel';
 import { TierChip, Chev } from '../../components/Chips';
 import { DonutChart, DonutLegend, TrendLine } from '../../components/charts';
 import { INR, INRc, istDate, shortCd } from '../../lib/format';
-import { countMed, nowMs, shortTarget, totalAtRisk, urgency } from '../../sim/selectors';
+import { countMed, elapsedSec, nowMs, shortTarget, totalAtRisk, urgency } from '../../sim/selectors';
 import { FeedRow } from '../details/slides';
+
+function windowPill(c: Case): { text: string; cls: string } {
+  if (c.tier === 'T4') return { text: 'WATCH', cls: 'elapsed' };
+  if (c._st === 'elapsed') return { text: 'ELAPSED', cls: 'elapsed' };
+  if (c._st === 'win') return { text: 'CLOSES ' + shortCd(Math.max(0, c.p90 - elapsedSec(c))), cls: 'win' };
+  return { text: 'OPENS ' + shortCd(Math.max(0, c.p10 - elapsedSec(c))), cls: 'pre' };
+}
 
 function CaseRow({ c }: { c: Case }) {
   const openSlide = useStore((s) => s.openSlide);
-  const cd =
-    c.tier === 'T4' ? 'WATCH' : c._st === 'elapsed' ? 'ELAPSED' : shortCd(Math.max(0, countMed(c)));
+  const pill = windowPill(c);
   return (
-    <div className="lrow" onClick={() => openSlide({ kind: 'case', id: c.id })}>
+    <div className={'lrow' + (c._st === 'win' ? ' win' : '')} onClick={() => openSlide({ kind: 'case', id: c.id })}>
       <span className="lr-id">#{c.short}</span>
       <TierChip t={c.tier} />
       <span className="lr-amt" style={c._st === 'win' ? { color: 'var(--red)' } : undefined}>
         {INRc(c.amount)}
       </span>
       <span className="lr-target">{shortTarget(c)}</span>
-      <span
-        className="lr-cd mono"
-        style={{ color: c._st === 'win' ? 'var(--red)' : c._st === 'elapsed' ? 'var(--tx3)' : 'var(--tx2)' }}
-      >
-        {cd}
-      </span>
+      <span className={'lr-state ' + pill.cls}>{pill.text}</span>
       <Chev />
     </div>
   );
@@ -41,7 +42,6 @@ export function OverviewPage() {
   const frozen0 = useStore((s) => s.frozen0);
   const recoveredYTD = useStore((s) => s.recoveredYTD);
   const recovered0 = useStore((s) => s.recovered0);
-  const spawned = useStore((s) => s.spawned);
   const openSlide = useStore((s) => s.openSlide);
 
   const ar = totalAtRisk();
@@ -59,16 +59,26 @@ export function OverviewPage() {
   const counts: Record<Tier, number> = { T1: 0, T2: 0, T3: 0, T4: 0 };
   cases.forEach((c) => counts[c.tier]++);
   const sorted = [...cases].sort(urgency);
+  const open = cases.filter((c) => c._st === 'win');
+  const openStake = open.reduce((s, c) => s + c.amount, 0);
 
   return (
     <div className="page">
       <div className="page-head">
         <span className="pg-num">01</span>
         <span className="pg-title">Overview</span>
-        <span className="pg-sub">{istDate(nowMs())} · I4C CENTRAL · CLICK ANY ROW FOR DETAIL</span>
+        <span className="pg-sub">
+          {istDate(nowMs())} · I4C CENTRAL · {cases.length} ACTIVE · CLICK ANY ROW FOR DETAIL
+        </span>
       </div>
       <div className="scgrid">
-        <StatCard label="ACTIVE CASES" value={cases.length} delta={spawned ? '+' + spawned + ' TODAY' : 'LIVE'} deltaClass="nt" />
+        <StatCard
+          label="WINDOWS OPEN NOW"
+          value={open.length}
+          delta={open.length ? INRc(openStake) + ' AT STAKE' : 'MONITORING'}
+          deltaClass={open.length ? 'dn' : 'nt'}
+          valueStyle={open.length ? { color: 'var(--red)' } : undefined}
+        />
         <StatCard
           label="FUNDS AT RISK"
           value={INRc(ar)}
@@ -91,8 +101,8 @@ export function OverviewPage() {
       <div className="ov-grid">
         <Panel
           icon="target"
-          title="HIGH-PRIORITY CASES"
-          meta={<span>{cases.length} active</span>}
+          title="CASE QUEUE · BY URGENCY"
+          meta={<span>{open.length} window open</span>}
         >
           <div>
             {sorted.map((c) => (
@@ -101,6 +111,21 @@ export function OverviewPage() {
           </div>
         </Panel>
         <div className="ov-right">
+          <Panel
+            icon="live"
+            title="LIVE"
+            meta={
+              <button className="linkbtn" onClick={() => openSlide({ kind: 'feed' })}>
+                VIEW ALL
+              </button>
+            }
+          >
+            <div className="feed">
+              {feed.slice(0, 6).map((e, i) => (
+                <FeedRow key={i} t={e.t} type={e.type} html={e.html} />
+              ))}
+            </div>
+          </Panel>
           <Panel icon="shield" title="FORECAST CONFIDENCE">
             <div className="p-body donut-wrap">
               <DonutChart counts={counts} />
@@ -113,21 +138,6 @@ export function OverviewPage() {
               <div className="chart-cap">
                 NCRP filings · <b>{trend7[6]} today</b> · peak {Math.max(...trend7)} on 18 SEP
               </div>
-            </div>
-          </Panel>
-          <Panel
-            icon="live"
-            title="LIVE"
-            meta={
-              <button className="linkbtn" onClick={() => openSlide({ kind: 'feed' })}>
-                VIEW ALL
-              </button>
-            }
-          >
-            <div className="feed">
-              {feed.slice(0, 4).map((e, i) => (
-                <FeedRow key={i} t={e.t} type={e.type} html={e.html} />
-              ))}
             </div>
           </Panel>
         </div>

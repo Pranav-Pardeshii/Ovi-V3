@@ -415,7 +415,7 @@ body {
   min-width: 0;
 }
 .sc-l {
-  font: 500 9px var(--mono);
+  font: 500 9.5px var(--mono);
   letter-spacing: 0.16em;
   color: var(--tx3);
   text-transform: uppercase;
@@ -469,7 +469,7 @@ body {
   flex: none;
 }
 .lr-amt {
-  font: 600 12.5px var(--mono);
+  font: 600 13px var(--mono);
   width: 74px;
   flex: none;
 }
@@ -492,6 +492,35 @@ body {
   color: var(--tx3);
   flex: none;
   display: flex;
+}
+/* action-state pill: what the investigator must do / when */
+.lr-state {
+  font: 700 9.5px var(--mono);
+  letter-spacing: 0.06em;
+  padding: 3px 9px;
+  border-radius: 12px;
+  white-space: nowrap;
+  flex: none;
+  min-width: 92px;
+  text-align: center;
+  color: var(--tx2);
+  background: var(--bg3);
+}
+.lr-state.win {
+  color: var(--red);
+  background: color-mix(in srgb, var(--red) 14%, transparent);
+  animation: pulse 1.1s infinite;
+}
+.lr-state.elapsed {
+  color: var(--tx3);
+}
+/* open-window rows shout first */
+.lrow.win {
+  background: color-mix(in srgb, var(--red) 6%, transparent);
+  box-shadow: inset 3px 0 0 var(--red);
+}
+.lrow.win:hover {
+  background: color-mix(in srgb, var(--red) 10%, transparent);
 }
 
 /* ---- chips ---- */

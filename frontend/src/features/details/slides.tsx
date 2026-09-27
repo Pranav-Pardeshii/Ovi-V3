@@ -137,14 +137,14 @@ function CaseSlideBody({ id }: { id: string }) {
   return (
     <>
       <div className="kv">
-        <Cell k="FILED · NCRP" v={istTime(c.filedAt) + ' IST'} />
-        <Cell k="SCAM PATTERN" v={c.scam} />
-        <Cell k="VICTIM · MASKED" v={c.victim} />
-        <Cell k="BANK · CITY" v={c.vBank + ' · ' + c.city} />
         <Cell k="AMOUNT" v={INRc(c.amount)} big />
-        <Cell k="MULES FLAGGED" v={c.mules.length + ' · federated'} />
         <Cell k="FORECAST TIER" v={<TierChip t={c.tier} />} />
         <Cell k="WINDOW" v={win ? istHM(c.depositAt + c.p10 * 1000) + ' – ' + istHM(c.depositAt + c.p90 * 1000) + ' IST' : '—'} />
+        <Cell k="MULES FLAGGED" v={c.mules.length + ' · federated'} />
+        <Cell k="SCAM PATTERN" v={c.scam} />
+        <Cell k="BANK · CITY" v={c.vBank + ' · ' + c.city} />
+        <Cell k="VICTIM · MASKED" v={c.victim} />
+        <Cell k="FILED · NCRP" v={istTime(c.filedAt) + ' IST'} />
       </div>
       <div className="narr">
         <HTM html={c.narr} />
