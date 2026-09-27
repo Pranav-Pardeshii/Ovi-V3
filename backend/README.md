@@ -8,13 +8,12 @@ so a backend-driven UI is indistinguishable from the sim-driven one.
 
 ## Run
 
+Dependencies are managed with [uv](https://docs.astral.sh/uv/) (`pyproject.toml` + `uv.lock`).
+
 ```bash
 cd backend
-python -m venv .venv
-.venv/Scripts/pip install -r requirements.txt     # Windows
-# .venv/bin/pip install -r requirements.txt       # Linux/macOS
-
-.venv/Scripts/python -m uvicorn app.main:app --reload --port 8000
+uv sync            # creates .venv from uv.lock
+uv run uvicorn app.main:app --reload --port 8000
 ```
 
 The Vite dev server proxies `/api` → `localhost:8000`
@@ -74,7 +73,7 @@ point when PostgreSQL/Neo4j land (see the plan document, §7).
 ## Tests
 
 ```bash
-.venv/Scripts/python -m pytest
+uv run pytest
 ```
 
 The RNG port is verified against golden values produced by running the exact
