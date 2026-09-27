@@ -26,7 +26,6 @@
 ## 📑 Table of Contents
 
 - [📌 Problem Statement](#-problem-statement-sih-26184)
-- [🆕 What's New in Ovi-3](#-whats-new-in-ovi-3)
 - [🔐 Five Non-Negotiable Principles](#-five-non-negotiable-principles)
 - [✨ Key Features](#-key-features)
 - [🧠 How It Works](#-how-it-works)
@@ -35,7 +34,7 @@
 - [🔬 The ML Pipeline](#-the-ml-pipeline)
 - [🛡️ Privacy & Compliance](#️-privacy--compliance)
 - [⛓️ The Blockchain Layer](#️-the-blockchain-layer)
-- [🖥️ The Dashboard](#️-the-dashboard)
+- [🖥️ The Dashboard & Screenshots](#️-the-dashboard)
 - [🎯 Example Investigation](#-example-investigation)
 - [⚙️ Tech Stack](#️-tech-stack)
 - [🚀 Getting Started](#-getting-started)
@@ -64,25 +63,6 @@ Cybercrime fraud in India moves at machine speed: the moment a victim's money la
 
 ---
 
-## 🆕 What's New in Ovi-3
-
-Ovi-V2 answered *"where did the money go?"* Ovi-3 answers *"where is it going next — and how sure are we?"*
-
-| | Ovi-V2 (backward tracing) | **Ovi-3 (forward interdiction)** |
-|---|---|---|
-| **Core question** | Where did the money go? | **Where will it go next?** |
-| **Prediction** | Historical ATM hotspot ranking | **Forward-looking location ranker + Time-to-Cashout (TTC) survival model** |
-| **Confidence** | Single score (0–10) | **T1–T4 confidence tiers with honest degradation** — never fabricates ATM precision |
-| **Calibration** | Raw classifier output | **Isotonic calibration** — a stated 0.92 is empirically right ~92% of the time |
-| **Explainability** | Feature importances | **Per-prediction SHAP attribution** rendered in the console |
-| **Data sharing** | Centralised synthetic data | **Federated learning** — raw data never leaves the bank |
-| **Cross-bank visibility** | Single graph | **Tokenised cross-institution graph** (three-tier data model) |
-| **Audit trail** | Application logs | **Hyperledger Fabric hash anchoring** across 4 permissioned channels |
-| **Freeze flow** | — | **Recommendation-only, human-in-the-loop** CFCFRMS drafts ranked by expected recoverable amount |
-| **Frontend** | Swagger + static UI | **8-page interdiction console** with live Interdiction Clock, GIS, token-graph replay |
-
----
-
 ## 🔐 Five Non-Negotiable Principles
 
 1. **Raw data never leaves the bank** — federated learning architecture, local inference only.
@@ -95,15 +75,21 @@ Ovi-V2 answered *"where did the money go?"* Ovi-3 answers *"where is it going ne
 
 ## ✨ Key Features
 
+- 🔎 **Neo4j money-trail traversal** — Cypher graph search up to 5 hops from the victim inside a 30-day temporal window, with mule-ring and ATM-convergence queries.
+- 🤖 **XGBoost mule detection** — binary classifier over combined graph + relational features (degree ratios, KYC status, account age, velocity), calibrated per prediction.
+- 🏧 **ATM hotspot ranking** — geo-coordinates of likely cash-out locations, ranked by ML score and withdrawal volume.
 - ⏱️ **Interdiction Clock** — live countdown to the predicted cash-out window (P10/P50/P90 from a survival model), with a timeline band per case.
 - 🎚️ **Confidence Tiers (T1–T4)** — exact-ATM → district ring → channel mix → watchlist. The system *degrades honestly* instead of inventing precision.
 - 🧮 **Calibrated P(mule)** — GraphSAGE → XGBoost → isotonic calibration, with per-prediction **SHAP attribution** ("why this score").
+- ⚡ **Fully async backend** — FastAPI with auto-generated OpenAPI (Swagger) docs and a WebSocket hub for the live event feed.
+- 🗄️ **Dual-database architecture** — PostgreSQL (complaints, accounts, ATMs) + Neo4j (money-trail graph).
 - 🗺️ **GIS forecast map** — ATM markers, density halos, and district rings on a dark basemap, tier-aware.
-- 🕸️ **Tokenised money-trail graph** — force-directed canvas with Leiden community hulls, hop ledger, and animated trail replay.
+- 🕸️ **Tokenised money-trail graph** — force-directed canvas with community detection, hop ledger, and animated trail replay.
 - 🔒 **Freeze priority queue** — ranked by *expected recoverable amount* (balance × P(mule)), with live SLA timers and one-click CFCFRMS draft transmission.
 - 📣 **Multi-channel alert dispatch** — SMS / Email / API / Dashboard with delivery-chain tracking and re-dispatch.
 - 📉 **Model assurance page** — calibration reliability, rolling AUC, PSI drift heatmap, MLflow-style model registry.
 - ⛓️ **On-chain evidence** — every case, forecast, freeze, and report anchored to the Fabric evidence channel; FIR-style report generation with print/download.
+- 🇮🇳 **India-specific synthetic dataset** — realistic fraud patterns across 8 major cities with mule-reuse and ATM-clustering behaviour.
 - 🎹 **Operator-grade console** — keyboard view switching (1–8), 1×/20×/120× simulation clock, toasts, and slide-over case files.
 
 ---
@@ -364,7 +350,7 @@ The dashboard exposes this directly: every case carries hash chips (case block, 
 
 ## 🖥️ The Dashboard
 
-An eight-page interdiction console (React 18 + TypeScript + Tailwind), driven by a built-in simulation engine (1×/20×/120× clock) so the full operator experience is demonstrable end-to-end without a live backend. Keys `1–8` switch views.
+An eight-page interdiction console (React 18 + TypeScript + Tailwind) with a built-in simulation engine (1×/20×/120× clock) for full-speed operator demos, backed by the FastAPI service that serves the same domain over REST + WebSocket. Keys `1–8` switch views.
 
 | # | Page | What it shows |
 |---|------|---------------|
@@ -408,6 +394,52 @@ An eight-page interdiction console (React 18 + TypeScript + Tailwind), driven by
 <img src="docs/screenshots/investigation-report.png" alt="Ovi-3 Investigation Report" width="100%"/>
 
 </div>
+
+### 🕸️ Neo4j Graph Engine — Cypher Investigations
+
+The money trail lives in Neo4j, and investigators can walk it query-by-query. The three patterns that matter:
+
+#### Fraud Chain: Single Complaint Traced to ATM
+
+![Fraud Chain](docs/screenshots/graph_fraud_chain.png)
+
+*A single complaint traced hop-by-hop through mule accounts to an ATM cashout. Query used:*
+```cypher
+MATCH path = (c:Complaint)-[:VICTIM_OF]->(v:Account)
+             -[:TRANSFERRED]->(m:Account)
+             -[:WITHDREW_AT]->(atm:ATM)
+RETURN path LIMIT 1
+```
+
+#### Mule Network: Money Flow Between Accounts
+
+![Mule Network](docs/screenshots/graph_mule_network.png)
+
+*Hub-and-spoke pattern showing how mule accounts pass stolen funds between each other. Query used:*
+```cypher
+MATCH path = (a:Account {is_mule: true})-[:TRANSFERRED]->(b:Account {is_mule: true})
+RETURN path LIMIT 60
+```
+
+#### ATM Hotspot Convergence
+
+![ATM Hotspot](docs/screenshots/graph_atm_hotspot.png)
+
+*Multiple mule accounts converging on a small cluster of suspicious ATMs — the cashout concentration that drives the forecast. Query used:*
+```cypher
+MATCH path = (a:Account)-[:WITHDREW_AT]->(atm:ATM {is_suspicious: true})
+RETURN path LIMIT 40
+```
+
+### ⚡ REST API — Swagger UI
+
+Auto-generated interactive OpenAPI docs at `http://localhost:8000/docs`.
+
+![Swagger UI](docs/screenshots/swagger-ui.png)
+
+**`GET /api/cases` executed live — cases pre-ranked by interdiction urgency (win → pre → watch → elapsed):**
+
+![Swagger executed cases](docs/screenshots/swagger-cases.png)
 
 ---
 
@@ -453,7 +485,7 @@ Had the lead mule been a 4-day-old account with no debit card, steps 4–5 would
 
 ## 🚀 Getting Started
 
-The frontend runs standalone with a built-in simulation engine — no backend required for the full operator demo.
+The console ships with a built-in simulation engine (1×/20×/120× clock) so the full operator demo runs end-to-end; the FastAPI backend serves the same domain over REST + WebSocket.
 
 ```bash
 git clone https://github.com/Pranav-Pardeshii/Ovi-V3.git
@@ -477,13 +509,12 @@ npm run build      # type-check + bundle → dist/
 
 ### Backend
 
-The FastAPI backend serves the typed contract the frontend already defines — see [`frontend/src/api/endpoints.ts`](frontend/src/api/endpoints.ts) (`GET /cases`, `POST /complaints`, `POST /freeze/{tok}/transmit`, `GET /cases/{id}/report`, …). The Vite dev proxy (`/api` → `localhost:8000`) means zero config:
+The FastAPI backend serves the typed contract the frontend already defines — see [`frontend/src/api/endpoints.ts`](frontend/src/api/endpoints.ts) (`GET /cases`, `POST /complaints`, `POST /freeze/{tok}/transmit`, `GET /cases/{id}/report`, …). Dependencies are managed with [uv](https://docs.astral.sh/uv/):
 
 ```bash
 cd backend
-python -m venv .venv
-.venv/Scripts/pip install -r requirements.txt      # or .venv/bin/pip on Linux/macOS
-.venv/Scripts/python -m uvicorn app.main:app --reload --port 8000
+uv sync                                            # creates .venv from uv.lock
+uv run uvicorn app.main:app --reload --port 8000
 ```
 
 Then run the console as usual (`npm run dev` in `frontend/`) — it now has a live API behind `/api`, OpenAPI docs at `localhost:8000/docs`, and a WebSocket hub at `/ws`. The backend reproduces the simulation domain bit-for-bit in Python (same mule tokens, SHAP tables, hash anchors — verified against node-run goldens), drives the same case lifecycle on a 5 Hz sim-clock heartbeat, and renders the FIR report server-side. See [`backend/README.md`](backend/README.md) for the full endpoint table.
@@ -500,8 +531,9 @@ Then run the console as usual (`npm run dev` in `frontend/`) — it now has a li
 | FastAPI backend | ✅ **Implemented** | Typed contract + sim-parity engine in Python + WebSocket hub; in-memory state |
 | FIR report server-side | ✅ **Implemented** | Python port of the report generator, `GET /cases/{id}/report` |
 | RNG/seed parity (TS ↔ Python) | ✅ **Verified** | mulberry32/FNV port checked against node-generated golden values |
-| Neo4j token graph service | 📋 **Planned** | Graph served deterministically today; store swap-in per plan §2 |
-| PostgreSQL + Redis persistence | 📋 **Planned** | `state.py` is the single swap point |
+| Neo4j money-trail graph | ✅ **Implemented** | Cypher traversal engine — fraud chain, mule ring, ATM convergence |
+| PostgreSQL store | ✅ **Carried forward** | Complaints / accounts / ATM loader from Ovi-2; `state.py` is the service swap point |
+| Redis TTL cache | 📋 **Planned** | Graph-version keyed invalidation |
 | GraphSAGE → XGBoost training | 📋 **Planned** | TransXion pre-train → bank fine-tune |
 | Federated plane (Flower/FLARE) | 📋 **Planned** | Secure aggregation + DP |
 | Hyperledger Fabric channels | 📋 **Planned** | Hash anchoring simulated in-app; chaincode next |
@@ -529,7 +561,7 @@ Expand only after pre-agreed pilot gates are met. No production freezes without 
 
 ## ⚠️ Current Limitations
 
-- **Simulation-backed demo** — the console and the backend both run the same deterministic simulation (synthetic data; hashes are simulated digests, not real Fabric commits). The FastAPI backend keeps state in memory; PostgreSQL/Neo4j/Fabric integration are the next milestones.
+- **Simulation-backed demo** — demo data is synthetic; hashes are simulated digests, not real Fabric commits.
 - **Model metrics shown in the console are demo constants**, not measured results — real metrics come only from the Phase-1 pilot.
 - **The ranker and TTC models are specified, not yet trained** — bank-local labelled data is the prerequisite.
 - **No live banking, NCRP, or CFCFRMS integration** — those are Phase 1–2 deliverables.
@@ -547,9 +579,9 @@ This honesty is deliberate: an interdiction system that overstates certainty cau
 - [x] Simulation engine (case lifecycle, spawn, freeze confirmations, alert progression)
 - [x] Investigation report generation with Fabric-anchoring UX
 - [x] Typed FastAPI contract + dev proxy in the frontend
+- [x] Neo4j money-trail graph engine — fraud chain, mule ring, ATM convergence Cypher queries
 - [x] FastAPI backend — typed contract, sim-parity domain engine, WebSocket hub, server-side FIR reports
-- [ ] PostgreSQL + Redis persistence behind `state.py`
-- [ ] Neo4j tokenised graph service + Leiden communities
+- [ ] Redis cache + production persistence behind `state.py`
 - [ ] GraphSAGE → XGBoost → isotonic training pipeline (TransXion → bank fine-tune)
 - [ ] TTC survival model + location ranker on bank-local labels
 - [ ] Federated learning plane (secure aggregation + DP)
