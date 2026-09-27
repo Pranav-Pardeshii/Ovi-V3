@@ -21,3 +21,12 @@ Ovi-3 Plan Document
 
 # build cache
 *.tsbuildinfo
+
+# python
+backend/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# vm
+.venv
