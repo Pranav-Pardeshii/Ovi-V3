@@ -207,14 +207,27 @@ function CaseSlideBody({ id }: { id: string }) {
 export function CaseSlideFoot({ id }: { id: string }) {
   const c = useStore((s) => s.cases.find((x) => x.id === id));
   const goto = useStore((s) => s.goto);
+  const selectCase = useStore((s) => s.selectCase);
   const openReport = useStore((s) => s.openReport);
   if (!c) return null;
   return (
     <>
-      <button className="btn pri" onClick={() => goto('cashout')}>
+      <button
+        className="btn pri"
+        onClick={() => {
+          selectCase(c.id);
+          goto('cashout');
+        }}
+      >
         <Icon n="target" s={12} /> OPEN FORECAST
       </button>
-      <button className="btn" onClick={() => goto('analysis')}>
+      <button
+        className="btn"
+        onClick={() => {
+          selectCase(c.id);
+          goto('analysis');
+        }}
+      >
         <Icon n="graph" s={12} /> TOKEN GRAPH
       </button>
       <button className="btn" onClick={() => goto('freeze')}>
