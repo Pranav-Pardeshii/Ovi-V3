@@ -20,6 +20,16 @@ MAX_CASES: int = 8
 
 FEED_CAP: int = 70
 
-# CORS — the console dev server. The Vite proxy makes this moot in dev, but
-# the typed contract (frontend/src/api/endpoints.ts) promises it.
-CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
+# CORS — the console dev server plus any deployed frontend origins.
+# The Vite proxy makes this moot in dev, but the typed contract
+# (frontend/src/api/endpoints.ts) promises it. Deployed frontends are added
+# via OVI_CORS_ORIGINS (comma-separated), set in the Render dashboard.
+CORS_ORIGINS: list[str] = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    *[
+        o.strip()
+        for o in os.getenv("OVI_CORS_ORIGINS", "").split(",")
+        if o.strip()
+    ],
+]
