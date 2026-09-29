@@ -26,7 +26,7 @@
 
 | The Challenge | The OVI Innovation | Measurable Impact |
 |:---|:---|:---|
-| **Speed Mismatch**: Cyber fraud money is layered across multiple mule accounts and withdrawn at ATMs within **30–120 minutes**. Traditional investigations take days or weeks. | **Real-Time Interdiction Window**: Ovi ingests NCRP/1930 complaints and within **<20 seconds** resolves the cross-bank graph, predicts cash-out targets, and computes an active countdown timer. | **From Post-Mortem to Prevention**: Law enforcement and banks receive ranked freeze recommendations and physical ATM dispatch alerts while funds are still reachable. |
+| **Speed Mismatch**: Cyber fraud money is layered across multiple mule accounts and withdrawn at ATMs within **30–120 minutes**. Traditional investigations take days or weeks. | **Proactive Cash-Out Forecasting**: Shifts investigation from post-mortem recovery to forward prediction — forecasting likely cashout venues, time windows, and prioritized freeze recommendations while funds are still in transit. | **From Post-Mortem to Prevention**: Law enforcement and banks receive ranked freeze recommendations and physical ATM dispatch alerts while funds are still reachable. |
 | **Privacy Regulations**: Banks cannot legally share raw customer transactions with third parties under DPDP Act 2023. | **Zero-PII Federated & Tokenised Graph**: Only cryptographically tokenised identifiers and local gradient signals are shared; raw PII never leaves bank firewalls. | **100% Regulatory Compliance**: Fully aligned with DPDP Act 2023 (§17), RBI FREE-AI guidelines, and MHA CFCFRMS SOP. |
 | **Evidentiary Integrity**: Digital tracing outputs are easily contested in court without verifiable provenance. | **Permissioned Blockchain Chain of Custody**: Every prediction, freeze recommendation, and FIR bundle is hash-anchored to Hyperledger Fabric. | **Tamper-Evident Evidence**: Complete, court-admissible cryptographic audit trail from complaint to recovery. |
 
@@ -116,19 +116,18 @@ Cyber fraud in India operates at machine speed: the moment a victim's money land
 
 ## 🧠 How It Works
 
-From complaint ingestion to actionable field interdiction in **under 20 seconds**:
+From complaint ingestion to actionable field interdiction:
 
 ```mermaid
 flowchart LR
-    A["NCRP / 1930 Complaint<br/><b>T + 0s</b>"] --> B["Case Creation &<br/>Hash Anchoring<br/><b>T + 1–3s</b>"]
-    B --> C["Tokenised Multi-Hop<br/>Graph Resolution<br/><b>T + 3–8s</b>"]
-    C --> D["Federated AI Scoring<br/>Calibrated P(mule)<br/><b>T + 5–12s</b>"]
-    D --> E["Cashout Forecast<br/>ATM Ranking & TTC<br/><b>T + 8–15s</b>"]
-    E --> F["Freeze Priority Queue<br/>Max Recoverable ₹"]
-    F --> G["Multi-Channel Alerts<br/>LEAs · Banks · ATM Ops<br/><b>T + 10–20s</b>"]
+    A["NCRP / 1930 Complaint<br/><b>Ingestion & Case Hash</b>"] --> B["Tokenised Multi-Hop<br/>Graph Resolution"]
+    B --> C["Federated AI Scoring<br/>Calibrated P(mule)"]
+    C --> D["Cashout Forecast<br/>ATM Ranking & TTC Window"]
+    D --> E["Freeze Priority Queue<br/>Ranked by Recoverable ₹"]
+    E --> F["Multi-Channel Alerts<br/>LEAs · Banks · ATM Ops"]
     style A fill:#11141C,stroke:#303851,color:#EEF1F8
-    style E fill:#8B7CF622,stroke:#8B7CF6,color:#EEF1F8
-    style G fill:#F8717122,stroke:#F87171,color:#EEF1F8
+    style D fill:#8B7CF622,stroke:#8B7CF6,color:#EEF1F8
+    style F fill:#F8717122,stroke:#F87171,color:#EEF1F8
 ```
 
 ```mermaid
@@ -139,8 +138,8 @@ sequenceDiagram
     participant B as Bank (Local Edge Node)
     participant F as Hyperledger Fabric
     participant L as LEA / Field Interdiction
-    V->>I: Complaint webhook ingested (T+0)
-    I->>F: Case digest anchored on-chain (T+2s)
+    V->>I: Complaint webhook ingested
+    I->>F: Case digest anchored on-chain
     I->>B: Query tokenised account graph
     B-->>I: Return calibrated P(mule) & anonymous tokens (Zero PII)
     I->>I: Compute Cashout Forecast (Location + TTC window + Confidence Tier)
