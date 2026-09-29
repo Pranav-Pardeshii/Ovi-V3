@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   OVI-3 design system — tokens + component classes.
+   OVI design system — tokens + component classes.
    Tailwind utilities handle layout in JSX; these classes carry the console
    look (fonts, chips, panels, tables, map + print overrides).
    ========================================================================== */

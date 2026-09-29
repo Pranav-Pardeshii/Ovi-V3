@@ -90,7 +90,7 @@ async def get_case_report(
     if raw or download:
         headers = {}
         if download:
-            headers["Content-Disposition"] = f'attachment; filename="OVI3-Report-{case_id}.html"'
+            headers["Content-Disposition"] = f'attachment; filename="OVI-Report-{case_id}.html"'
         from fastapi.responses import HTMLResponse
 
         return HTMLResponse(doc, headers=headers)

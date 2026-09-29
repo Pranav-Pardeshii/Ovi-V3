@@ -1,1 +1,1 @@
-"""Ovi-3 interdiction backend."""
+"""Ovi interdiction backend."""

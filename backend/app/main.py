@@ -1,4 +1,4 @@
-"""Ovi-3 FastAPI application.
+"""Ovi FastAPI application.
 
 Run from backend/:
     .venv/Scripts/python -m uvicorn app.main:app --reload --port 8000
@@ -48,10 +48,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(
-    title="Ovi-3 — Cashout Interdiction API",
+    title="Ovi — Cashout Interdiction API",
     version="3.4.1",
     description=(
-        "Backend for the Ovi-3 interdiction console. Serves the typed contract in "
+        "Backend for the Ovi interdiction console. Serves the typed contract in "
         "frontend/src/api/endpoints.ts: cases, alerts, complaint ingestion, "
         "CFCFRMS freeze transmission, and FIR-style report bundles. "
         "Demo data is synthetic; the sim clock drives case lifecycle exactly "
@@ -73,4 +73,4 @@ app.include_router(router)
 
 @app.get("/")
 async def root() -> dict:
-    return {"service": "ovi-3", "docs": "/docs", "health": "/api/health"}
+    return {"service": "ovi", "docs": "/docs", "health": "/api/health"}

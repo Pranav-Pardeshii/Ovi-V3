@@ -142,7 +142,7 @@ export const useStore = create<Store>()((set, get) => ({
     setTimeout(
       () =>
         get().toast(
-          'OVI-3 ONLINE',
+          'OVI ONLINE',
           '6 cases loaded · a Tier-1 window opens within minutes. Click any case → GENERATE REPORT for the FIR-style bundle.',
           'info',
         ),

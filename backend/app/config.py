@@ -1,4 +1,4 @@
-"""Runtime knobs for the Ovi-3 backend.
+"""Runtime knobs for the Ovi backend.
 
 Defaults mirror the frontend simulation (src/store/useStore.ts) so a
 sim-driven UI and a backend-driven UI behave identically. Override via env.

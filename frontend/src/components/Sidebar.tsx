@@ -22,7 +22,7 @@ export function Sidebar() {
         </svg>
         <div>
           <div className="brand-name">
-            OVI<em>·3</em>
+            OVI
           </div>
           <div className="brand-sub">INTERDICTION PLATFORM</div>
         </div>

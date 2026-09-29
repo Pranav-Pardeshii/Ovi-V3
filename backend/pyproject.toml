@@ -1,7 +1,7 @@
 [project]
 name = "ovi-backend"
 version = "0.1.0"
-description = "FastAPI server for the Ovi-3 interdiction console"
+description = "FastAPI server for the Ovi interdiction console"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115",

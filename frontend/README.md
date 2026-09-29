@@ -1,6 +1,6 @@
-# OVI-3 · Cashout Interdiction Platform — Frontend
+# OVI · Cashout Interdiction Platform — Frontend
 
-React 18 + TypeScript + Vite + Tailwind port of the original single-file OVI-3 dashboard.
+React 18 + TypeScript + Vite + Tailwind port of the original single-file OVI dashboard.
 The simulation (sim clock, case lifecycle, spawns, freeze confirmations) runs client-side
 for now; a FastAPI backend will replace it via the typed layer in `src/api/`.
 

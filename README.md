@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="docs/banner.svg" alt="OVI·3 — Cashout Interdiction Platform" width="100%"/>
+<img src="docs/banner.svg" alt="OVI — Cashout Interdiction Platform" width="100%"/>
 
-# OVI·3 — Cashout Interdiction Platform
+# OVI — Cashout Interdiction Platform
 
 **Predictive analytics that forecasts where and when cybercrime money will be withdrawn — while it is still reachable.**
 
@@ -19,7 +19,7 @@
 
 > **Ovi** is a form of traditional Marathi poetry.
 > [Ovi-V2](https://github.com/Pranav-Pardeshii/Ovi-V2) traced the thread of stolen money *backwards* — from victim to mule to ATM.
-> **Ovi-3 follows it *forwards*** — forecasting the likely cash-out location, time window, and channel before the money disappears.
+> **Ovi follows it *forwards*** — forecasting the likely cash-out location, time window, and channel before the money disappears.
 
 ---
 
@@ -57,9 +57,9 @@
 
 Cybercrime fraud in India moves at machine speed: the moment a victim's money lands in a mule account, it is stripped across layers of accounts and withdrawn through ATMs, wallets, and UPI rails — often within hours of the complaint being filed. By the time investigators begin tracing, the funds are gone.
 
-**Ovi-3 flips the timeline.** After a complaint arrives on the NCRP/1930 portal, it forecasts the *likely cash-out locations, time windows, and channels* while funds are still cascading through mule accounts — giving I4C investigators, banks, and field teams a concrete window to act instead of a trail to reconstruct.
+**Ovi flips the timeline.** After a complaint arrives on the NCRP/1930 portal, it forecasts the *likely cash-out locations, time windows, and channels* while funds are still cascading through mule accounts — giving I4C investigators, banks, and field teams a concrete window to act instead of a trail to reconstruct.
 
-> ⚠️ **Ovi-3 does not replace CFCFRMS, bank EFRMS, RBIH MuleHunter.ai, or NPCI risk scoring.** It adds a proactive geographic-and-temporal prediction layer on top of them.
+> ⚠️ **Ovi does not replace CFCFRMS, bank EFRMS, RBIH MuleHunter.ai, or NPCI risk scoring.** It adds a proactive geographic-and-temporal prediction layer on top of them.
 
 ---
 
@@ -68,7 +68,7 @@ Cybercrime fraud in India moves at machine speed: the moment a victim's money la
 1. **Raw data never leaves the bank** — federated learning architecture, local inference only.
 2. **Predictions are calibrated and tiered** — confidence tiers with honest degradation; never fabricate ATM-level precision.
 3. **Every material action is human-reviewed and auditable** — Hyperledger Fabric hash anchoring plus mandatory investigator/bank override.
-4. **No autonomous freezes** — Ovi-3 produces ranked recommendations only; freeze and lien authority stays with the bank and LEA under the MHA CFCFRMS SOP.
+4. **No autonomous freezes** — Ovi produces ranked recommendations only; freeze and lien authority stays with the bank and LEA under the MHA CFCFRMS SOP.
 5. **Legal basis is explicitly scoped** — DPDP Act 2023 §17 (prevention / detection / investigation of offences) with existing powers under CrPC/BNSS and bank regulatory obligations.
 
 ---
@@ -115,7 +115,7 @@ flowchart LR
 sequenceDiagram
     autonumber
     participant V as Victim (1930 / NCRP)
-    participant I as I4C · Ovi-3
+    participant I as I4C · Ovi
     participant B as Bank (local)
     participant F as Hyperledger Fabric
     participant L as LEA / Field team
@@ -320,7 +320,7 @@ flowchart LR
     style T3 fill:#34D39910,stroke:#34D399
 ```
 
-| Instrument | Requirement | How Ovi-3 complies |
+| Instrument | Requirement | How Ovi complies |
 |------------|-------------|--------------------|
 | [DPDP Act 2023 §17](https://www.dpdpact2023.com/) | Exemption for prevention / detection / investigation of offences | Primary legal basis for tokenised cross-institution processing |
 | DPDP Act 2023 (general) | Purpose limitation, minimisation, safeguards | Three-tier model; AES-256 at rest, TLS 1.3 in transit; only hashes on-chain |
@@ -367,31 +367,31 @@ An eight-page interdiction console (React 18 + TypeScript + Tailwind) with a bui
 
 **01 · Overview — live interdiction console**
 
-<img src="docs/screenshots/overview.png" alt="Ovi-3 Overview page" width="100%"/>
+<img src="docs/screenshots/overview.png" alt="Ovi Overview page" width="100%"/>
 
 **05 · Cashout Forecast — Interdiction Clock, GIS map & ATM ranker**
 
-<img src="docs/screenshots/cashout-forecast.png" alt="Ovi-3 Cashout Forecast page" width="100%"/>
+<img src="docs/screenshots/cashout-forecast.png" alt="Ovi Cashout Forecast page" width="100%"/>
 
 **03 · Graph Analysis — tokenised money trail (replay mid-animation)**
 
-<img src="docs/screenshots/graph-analysis.png" alt="Ovi-3 Graph Analysis page" width="100%"/>
+<img src="docs/screenshots/graph-analysis.png" alt="Ovi Graph Analysis page" width="100%"/>
 
 **04 · Mules — calibrated P(mule) with SHAP attribution**
 
-<img src="docs/screenshots/shap-explainability.png" alt="Ovi-3 SHAP explainability" width="100%"/>
+<img src="docs/screenshots/shap-explainability.png" alt="Ovi SHAP explainability" width="100%"/>
 
 **06 · Freeze Priority — CFCFRMS queue with SLA timers**
 
-<img src="docs/screenshots/freeze-priority.png" alt="Ovi-3 Freeze Priority page" width="100%"/>
+<img src="docs/screenshots/freeze-priority.png" alt="Ovi Freeze Priority page" width="100%"/>
 
 **07 · Alert Dispatch — multi-channel delivery chains**
 
-<img src="docs/screenshots/alert-dispatch.png" alt="Ovi-3 Alert Dispatch page" width="100%"/>
+<img src="docs/screenshots/alert-dispatch.png" alt="Ovi Alert Dispatch page" width="100%"/>
 
 **Investigation Report — FIR-style bundle, anchored to Fabric**
 
-<img src="docs/screenshots/investigation-report.png" alt="Ovi-3 Investigation Report" width="100%"/>
+<img src="docs/screenshots/investigation-report.png" alt="Ovi Investigation Report" width="100%"/>
 
 </div>
 
@@ -447,7 +447,7 @@ Auto-generated interactive OpenAPI docs at `http://localhost:8000/docs`.
 
 **Case `NCRP-2026-0918-4471` · Digital Arrest · ₹18,50,000 · Bengaluru**
 
-| Step | What Ovi-3 does |
+| Step | What Ovi does |
 |------|-----------------|
 | 1 | Complaint ingested from NCRP; case created and hash-anchored in ~2s |
 | 2 | Tokenised graph resolves the victim's ₹18.5L across 2 hops into 4 mule accounts across SBI / ICICI / AXIS / PNB |
@@ -574,7 +574,7 @@ This honesty is deliberate: an interdiction system that overstates certainty cau
 ## 🗺️ Roadmap
 
 - [x] Ovi-V2 — backward money-trail tracing, XGBoost mule detector, ATM hotspot ranking
-- [x] Ovi-3 implementation plan (architecture, privacy, compliance, rollout)
+- [x] Ovi implementation plan (architecture, privacy, compliance, rollout)
 - [x] Interdiction console — all 8 pages with Interdiction Clock, tiers, GIS, SHAP, freeze queue
 - [x] Simulation engine (case lifecycle, spawn, freeze confirmations, alert progression)
 - [x] Investigation report generation with Fabric-anchoring UX

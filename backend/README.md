@@ -1,4 +1,4 @@
-# Ovi-3 Backend
+# Ovi Backend
 
 FastAPI server for the interdiction console. It serves the typed contract
 defined in [`frontend/src/api/endpoints.ts`](../frontend/src/api/endpoints.ts)

@@ -226,7 +226,7 @@ function RankPanel({ c }: { c: Case }) {
           </div>
         ))}
         <div className="rk-note">
-          Signal available: “account exists” only. <b>Ovi-3 never fabricates ATM precision.</b>
+          Signal available: “account exists” only. <b>Ovi never fabricates ATM precision.</b>
         </div>
       </div>
     </Panel>
@@ -334,7 +334,7 @@ export function CashoutPage() {
         <div className="cb-mid">
           {T4 ? (
             <div className="sub-note" style={{ width: '100%', textAlign: 'center', padding: '20px 0' }}>
-              No timeline rendered — watchlist enrollment only. Ovi-3 does not fabricate ATM precision when the graph
+              No timeline rendered — watchlist enrollment only. Ovi does not fabricate ATM precision when the graph
               signal is insufficient.
             </div>
           ) : (

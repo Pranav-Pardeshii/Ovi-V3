@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="300" viewBox="0 0 1000 300" role="img" aria-label="OVI-3 Cashout Interdiction Platform">
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="300" viewBox="0 0 1000 300" role="img" aria-label="OVI Cashout Interdiction Platform">
   <defs>
     <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
       <circle cx="1.2" cy="1.2" r="1.2" fill="#1F2433"/>
@@ -14,7 +14,7 @@
   <rect x="1.5" y="1.5" width="997" height="297" rx="17" fill="none" stroke="#8B7CF6" stroke-opacity=".38" stroke-width="1.5"/>
 
   <!-- ============ title block ============ -->
-  <text x="48" y="108" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="62" font-weight="700" fill="#EEF1F8" letter-spacing="2">OVI<tspan fill="#8B7CF6">·3</tspan></text>
+  <text x="48" y="108" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="62" font-weight="700" fill="#EEF1F8" letter-spacing="2">OVI</text>
   <text x="50" y="142" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="600" fill="#A6AFC6" letter-spacing="4">CASHOUT INTERDICTION PLATFORM</text>
   <text x="50" y="172" font-family="Consolas, Menlo, monospace" font-size="12" fill="#6E7994" letter-spacing="1">v2 traced the thread backwards · v3 predicts where it goes next</text>
   <rect x="50" y="188" width="300" height="2" fill="url(#fade)"/>
