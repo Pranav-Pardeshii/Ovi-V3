@@ -119,15 +119,20 @@ Cyber fraud in India operates at machine speed: the moment a victim's money land
 From complaint ingestion to actionable field interdiction:
 
 ```mermaid
-flowchart LR
-    A["NCRP / 1930 Complaint<br/><b>Ingestion & Case Hash</b>"] --> B["Tokenised Multi-Hop<br/>Graph Resolution"]
-    B --> C["Federated AI Scoring<br/>Calibrated P(mule)"]
-    C --> D["Cashout Forecast<br/>ATM Ranking & TTC Window"]
-    D --> E["Freeze Priority Queue<br/>Ranked by Recoverable ₹"]
-    E --> F["Multi-Channel Alerts<br/>LEAs · Banks · ATM Ops"]
+flowchart TD
+    A["Complaint Filed<br/>Victim reports on NCRP"] --> B["System Starts Investigating<br/>Runs quietly in the background"]
+    B --> C["Bank A, B, C...<br/>Checks its own records"]
+    C --> D{"New Bank Linked?<br/>Checks the hop limit"}
+    D -- Yes --> E["Ask That Bank<br/>If still under the limit"]
+    E --> C
+    D -- No --> F["Combine All Clues (MULE)<br/>One picture across all banks"]
+    F --> G["Spot Suspicious Pattern<br/>Finds the money trail"]
+    G --> H["Predict Cash-Out Spot<br/>Likely ATM and likely time"]
+    H --> I["Alert Police and Banks<br/>So they can act in time"]
+
     style A fill:#11141C,stroke:#303851,color:#EEF1F8
-    style D fill:#8B7CF622,stroke:#8B7CF6,color:#EEF1F8
-    style F fill:#F8717122,stroke:#F87171,color:#EEF1F8
+    style H fill:#8B7CF622,stroke:#8B7CF6,color:#EEF1F8
+    style I fill:#F8717122,stroke:#F87171,color:#EEF1F8
 ```
 
 ```mermaid
@@ -151,6 +156,16 @@ sequenceDiagram
 
 ---
 
+## 🚧 Feasibility & Viability
+
+- **Feasibility**: Built on mature, proven technologies (Neo4j, XGBoost, Kafka). The prototype is feasible with 2-3 partner banks. The main blocker is bank policy, not engineering constraints.
+- **Challenges & Mitigation**:
+  - **Banks won't share raw data** → Tokenize at source before it leaves the bank.
+  - **Risk of wrongful account freeze** → Explainable predictions; human intervention.
+  - **Legal defensibility of predictions** → Append-only audit ledger of every action.
+
+---
+
 ## 🏗️ End-to-End Architecture
 
 ```mermaid
@@ -171,18 +186,20 @@ flowchart TB
     end
 
     subgraph FED["Privacy-Preserving Federated Plane"]
-        F1["Secure Multi-Party Aggregation (Differential Privacy)"]
+        F1["NVIDIA Flare Aggregation (Differential Privacy)"]
         F2["Global Model Registry (MLflow + ONNX)"]
     end
 
     subgraph I4C["I4C Central Ovi Platform"]
-        C1["API Gateway (mTLS + OAuth2)"]
-        C2["Cross-Bank Tokenised Graph Store"]
-        C3["Mule Detection & Clustering Service"]
-        C4["Cash-out Forecasting & Survival Engine"]
-        C5["Freeze Priority Engine (Recoverable ₹)"]
-        C6["Multi-Channel Alert Dispatcher"]
-        C7["GIS Heatmap & Geospatial Engine"]
+        C1["Kong API Gateway (mTLS + OAuth2)"]
+        C8["Investigation Orchestrator (Temporal)"]
+        C9["Event Bus (Kafka)"]
+        C2["Tokenization & Entity Resolution (HashiCorp Vault)"]
+        C3["Mule Detection & Community Detection (Leiden/XGBoost)"]
+        C4["Cashout Prediction Service (XGBoost)"]
+        C5["Freeze Priority Engine"]
+        C6["Multi-Channel Alerting (SMS/Email)"]
+        C7["GIS Risk Heatmap"]
     end
 
     subgraph CHAIN["Permissioned Hyperledger Fabric Network"]
@@ -248,8 +265,8 @@ flowchart TB
 
 ## 🔬 The AI & Machine Learning Pipeline
 
-### 1. Hybrid Inductive Graph Neural Network (GraphSAGE + XGBoost)
-- **Inductive Embeddings**: GraphSAGE aggregates feature representations from 2-hop local subgraphs. This allows Ovi to immediately embed and evaluate brand-new or previously unseen accounts without retraining the entire graph.
+### 1. Hybrid ML Mule Scoring (Leiden + XGBoost)
+- **Community Detection (Leiden/Louvain)**: Discovers highly connected clusters of accounts passing funds among each other, flagging entire mule networks simultaneously.
 - **Tabular Velocity Features**: Integrates transaction burst frequency, dormancy interval breaches, in/out flow velocity ratios, KYC status, and phone-circle mismatches.
 - **Isotonic Calibration**: Calibrates probabilities on empirical holdouts to prevent overconfident false positives.
 
@@ -257,7 +274,7 @@ flowchart TB
 flowchart LR
     A["Raw Transaction Stream"] --> B["Neo4j Graph Store"]
     B --> C["As-Of Feature Generator<br/>(Zero Lookahead)"]
-    C --> D["GraphSAGE (3-Layer)<br/>Neighborhood Aggregation"]
+    C --> D["Leiden Algorithm<br/>Community Detection"]
     C --> E["Tabular Features<br/>Velocity · Bursts · Ratios"]
     D --> F["XGBoost Classifier +<br/>Isotonic Calibration"]
     E --> F
@@ -306,6 +323,20 @@ flowchart LR
 | **Karnataka HC PhonePe Ruling** | Privacy yields to lawful criminal fraud investigations. | Establishes jurisprudence for inter-bank data coordination under law enforcement supervision. |
 | **RBI FREE-AI Framework (2025)** | Fairness, Resilience, Ethics, Explainability, Human Oversight. | Granular SHAP attribution per prediction; zero autonomous freezes; mandatory human sign-off. |
 | **MHA CFCFRMS SOP (2026)** | Proportionate account liens; prevention of undue financial disruption. | Freeze priority strictly ordered by expected recoverable amount; instant audit logs. |
+
+---
+
+## 💡 Impact and Benefits
+
+| Domain | Impact |
+|:---|:---|
+| **National / System** | Scales to 8000+ cases/day with a proactive response. |
+| **Banks** | No raw data shared; reduces fraud liability. |
+| **Citizens / Victims** | Faster fund recovery; more trust to report. |
+| **Law Enforcement** | Fast, exact leads with a clear audit trail. |
+| **Macro Impact** | Protects the economy and boosts cybersecurity. |
+| **Digital Trust** | Greater public trust and inter-bank trust. |
+| **Regulators** | Sets sharing norms and ensures easier compliance. |
 
 ---
 
@@ -445,17 +476,17 @@ Interactive API documentation available at `http://localhost:8000/docs`:
 | Domain | Technology | Operational Justification |
 |:---|:---|:---|
 | **Graph Database** | **Neo4j Enterprise** | Sub-second Cypher queries across multi-hop directed transaction graphs |
-| **Graph Neural Network** | **PyTorch Geometric** | Production-grade GraphSAGE for inductive node embeddings on cold-start accounts |
-| **Gradient Boosting** | **XGBoost + Isotonic Calibrator** | Fast inference, tabular feature mastery, and native SHAP tree-explainer support |
+| **Community Detection** | **Leiden Algorithm** | Finds groups of accounts working together as mule rings |
+| **Machine Learning** | **XGBoost + SHAP** | Mule classification and cashout prediction with explainability |
 | **Backend Framework** | **FastAPI (Python 3.12)** | Asynchronous REST endpoints, auto OpenAPI generation, and WebSocket hub |
-| **Relational Database** | **PostgreSQL** | ACID-compliant storage for complaints, account metadata, and audit events |
-| **In-Memory Cache** | **Redis** | High-throughput sub-millisecond caching of active graph version keys |
-| **Blockchain** | **Hyperledger Fabric** | Permissioned consortium architecture; tamper-evident hash anchoring |
-| **Federated Learning** | **Flower / NVIDIA FLARE** | Secure gradient aggregation with differential privacy guarantees |
-| **Frontend Framework** | **React 18 + TypeScript** | Type-safe, high-performance mission console with zero layout stutter |
-| **Styling & UI** | **Tailwind CSS + Lucide** | Clean, dark-mode operator aesthetic with responsive information density |
-| **Geospatial Mapping** | **Leaflet / OpenStreetMap** | Real-time GIS rendering of ATM clusters, density halos, and district boundaries |
-| **Environment Management**| **Astral uv + npm** | Ultra-fast, reproducible dependency management and lockfile enforcement |
+| **Relational Database** | **PostgreSQL** | ACID-compliant storage for complaints, account metadata, and local txn stores |
+| **API Gateway** | **Kong & OAuth2** | Secure entry point, mutual authentication (mTLS) |
+| **Event Bus** | **Kafka** | Real-time data streaming and event-driven alerts |
+| **Orchestrator** | **Temporal** | Durable workflow orchestration for multi-bank investigations |
+| **Secrets & Tokens** | **HashiCorp Vault** | HMAC-based tokenization and secure key management |
+| **Federated Learning** | **NVIDIA Flare** | Secure gradient aggregation with differential privacy guarantees |
+| **Model Registry** | **MLflow** | Versioning, reproducibility, and model lifecycle management |
+| **Frontend & GIS** | **React 18 + TS + Leaflet** | Type-safe mission console and real-time GIS rendering |
 
 ---
 
@@ -511,19 +542,27 @@ uv run uvicorn app.main:app --reload --port 8000
 
 ---
 
-## 🛣️ Phased Production Rollout
+## 🚀 Future Scope & Features
 
-```mermaid
-flowchart LR
-    P0["<b>Phase 0: Architecture & Sandbox</b><br/>• Completed SIH Prototype<br/>• Algorithmic Validation<br/>• Legal Alignment"] --> P1["<b>Phase 1: Single-Bank Pilot</b><br/>• Edge node deployment<br/>• Bank-internal data fine-tuning<br/>• I4C Sandbox testing"]
-    P1 --> P2["<b>Phase 2: Multi-Bank Federated Trial</b><br/>• Cross-bank tokenised resolution<br/>• Federated learning ring<br/>• CFCFRMS live integration"]
-    P2 --> P3["<b>Phase 3: National Scale Deployment</b><br/>• Pan-India LEA access<br/>• Real-time interdiction network<br/>• Hyperledger Fabric consortium"]
+- **Beyond ATMs**: Cover digital wallets and merchant cash-outs.
+- **Onboard Banks**: Start with a few banks, and expand over time.
+- **Deepen the Network**: Raise hop depth and add more banks over time.
+- **Launch Mobile App**: Instant alerts for field officers.
+- **National Rollout**: RBI/I4C mandate for all banks & NBFCs.
+- **Upgrade to GNN**: Upgrade to GraphSAGE (GNN) + XGBoost for richer inductive embeddings.
 
-    style P0 fill:#11141C,stroke:#303851,color:#EEF1F8
-    style P1 fill:#8B7CF622,stroke:#8B7CF6,color:#EEF1F8
-    style P2 fill:#FB923C18,stroke:#FB923C,color:#EEF1F8
-    style P3 fill:#34D39918,stroke:#34D399,color:#EEF1F8
-```
+---
+
+## 📚 Research and References
+
+- **National Cybercrime Reporting Portal (NCRP)** — I4C, MHA
+- **Citizen Financial Cyber Fraud Reporting and Management System (CFCFRMS)**
+- **Weber et al. (2019)** — Anti-Money Laundering in Bitcoin: GCN for Financial Forensics
+- **SBC 2023** — Graph Neural Networks Applied to Money Laundering Detection
+- **Bonato & Szava** — Network Embedding Analysis for AML Detection
+- **Federated ML for Cross-Bank CC Fraud Detection (2025)**
+- **J.P. Morgan / Kinexys, BNY, RBC, NVIDIA** — Project Aikya (2025)
+- **Bharatiya Nagarik Suraksha Sanhita (BNSS), 2023** — Section 94: The Legal Authority to Demand Data
 
 ---
 
