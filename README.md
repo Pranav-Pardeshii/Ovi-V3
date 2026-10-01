@@ -568,16 +568,6 @@ uv run uvicorn app.main:app --reload --port 8000
 
 ## 👥 Team RyzenUp
 
-| Role | Core Responsibilities |
-|:---|:---|
-| **Team Lead & System Architect** | End-to-end architecture, system design, and pilot coordination |
-| **AI / Graph ML Specialist** | GraphSAGE GNN, XGBoost calibration, and TTC survival model |
-| **Backend & Distributed Systems** | FastAPI architecture, Neo4j graph schemas, and federated learning plane |
-| **Frontend & Geospatial Engineer**| Interdiction mission console, GIS heatmap engine, and canvas visualizations |
-| **Blockchain & Security Engineer** | Hyperledger Fabric channels, cryptographic hash anchoring, and chaincode |
-| **Data Governance & Legal Compliance**| Dataset engineering, DPDP Act 2023 alignment, and MHA SOP compliance |
-
----
 
 ## 📄 License
 
